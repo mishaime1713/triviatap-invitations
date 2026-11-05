@@ -175,41 +175,66 @@
     </main>
 
     <script>
-        const params = new URLSearchParams(window.location.search);
-        const code = (params.get("code") || "").trim().toUpperCase();
+        
+const params = new URLSearchParams(window.location.search);
+const code = (params.get("code") || "").trim().toUpperCase();
 
-        const codeDisplay = document.getElementById("classroomCode");
-        const message = document.getElementById("message");
+const codeDisplay = document.getElementById("codeDisplay");
+const message = document.getElementById("message");
 
-        if (/^[A-Z0-9]+$/.test(code)) {
-            codeDisplay.textContent = code;
-        } else {
-            codeDisplay.textContent = "No code";
-            message.textContent =
-                "This invitation link does not contain a valid classroom code.";
-        }
+let invitationValid = false;
 
-        async function copyCode() {
-            if (!code) return;
+async function loadInvitation() {
+  if (!/^[A-Z0-9]+$/.test(code)) {
+    codeDisplay.textContent = "No code";
+    message.textContent = "This invitation link does not contain a valid classroom code.";
+    return;
+  }
 
-            try {
-                await navigator.clipboard.writeText(code);
-                message.style.color = "#38845c";
-                message.textContent = "Classroom code copied!";
-            } catch (error) {
-                message.style.color = "#c14b4b";
-                message.textContent =
-                    "Unable to copy automatically. Please copy the code manually.";
-            }
-        }
+  codeDisplay.textContent = "Checking...";
+  message.textContent = "Verifying your classroom invitation...";
 
-        function openTriviaTap() {
-            if (!code) return;
+  try {
+    const response = await fetch(
+      `/api/invitation?code=${encodeURIComponent(code)}`
+    );
 
-            message.style.color = "#5267d8";
-            message.textContent =
-                "Open TriviaTap and enter this classroom code: " + code;
-        }
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Invitation not found.");
+    }
+
+    invitationValid = true;
+    codeDisplay.textContent = data.join_code;
+    message.textContent = "You're invited to: " + data.quiz_title;
+
+  } catch (error) {
+    codeDisplay.textContent = "Invalid invitation";
+    message.textContent = error.message;
+  }
+}
+
+async function copyCode() {
+  if (!invitationValid) return;
+
+  try {
+    await navigator.clipboard.writeText(code);
+    message.textContent = "Classroom code copied!";
+  } catch (error) {
+    message.textContent = "Unable to copy the code. Please copy it manually.";
+  }
+}
+
+function openTriviaTap() {
+  if (!invitationValid) return;
+
+  message.textContent =
+    "Open TriviaTap and enter this classroom code: " + code;
+}
+
+loadInvitation();
+
     </script>
 
 </body>
