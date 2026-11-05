@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TriviaTap | Classroom Invitation</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #263248;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 460px;
+            padding: 38px 30px;
+            border-radius: 22px;
+            box-shadow: 0 8px 35px rgba(30, 50, 80, 0.09);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            color: #5267d8;
+            margin-bottom: 35px;
+        }
+
+        .icon {
+            width: 75px;
+            height: 75px;
+            background: #edf0ff;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 22px;
+        }
+
+        h1 {
+            font-size: 27px;
+            margin-bottom: 12px;
+        }
+
+        .description {
+            color: #778198;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .code-box {
+            background: #f5f6fc;
+            border: 1px dashed #aab4e8;
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 22px;
+        }
+
+        .code-label {
+            font-size: 12px;
+            color: #818ba2;
+            letter-spacing: 1px;
+            margin-bottom: 9px;
+        }
+
+        #classroomCode {
+            font-size: 30px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            color: #5267d8;
+            overflow-wrap: anywhere;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        .copy-button {
+            background: #5267d8;
+            color: white;
+        }
+
+        .copy-button:hover {
+            background: #4054c2;
+        }
+
+        .secondary-button {
+            background: #edf0ff;
+            color: #5267d8;
+        }
+
+        .note {
+            color: #929bad;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-top: 15px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #a0a8b8;
+            font-size: 12px;
+        }
+
+        .error {
+            color: #c14b4b;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="container">
+
+        <div class="logo">TriviaTap</div>
+
+        <div class="icon">🎓</div>
+
+        <h1>You're Invited!</h1>
+
+        <p class="description">
+            Your teacher invited you to join a classroom quiz.
+            Use the invitation code below to get started.
+        </p>
+
+        <div class="code-box">
+            <div class="code-label">CLASSROOM INVITATION CODE</div>
+            <div id="classroomCode">------</div>
+        </div>
+
+        <button class="copy-button" onclick="copyCode()">
+            Copy Classroom Code
+        </button>
+
+        <button class="secondary-button" onclick="openTriviaTap()">
+            Open TriviaTap
+        </button>
+
+        <p class="note">
+            Don't have TriviaTap installed yet?
+            Keep this invitation code and use it when you have access
+            to the app.
+        </p>
+
+        <p id="message" class="error"></p>
+
+        <div class="footer">
+            © 2026 TriviaTap. Learn. Play. Achieve.
+        </div>
+
+    </main>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const code = (params.get("code") || "").trim().toUpperCase();
+
+        const codeDisplay = document.getElementById("classroomCode");
+        const message = document.getElementById("message");
+
+        if (/^[A-Z0-9]+$/.test(code)) {
+            codeDisplay.textContent = code;
+        } else {
+            codeDisplay.textContent = "No code";
+            message.textContent =
+                "This invitation link does not contain a valid classroom code.";
+        }
+
+        async function copyCode() {
+            if (!code) return;
+
+            try {
+                await navigator.clipboard.writeText(code);
+                message.style.color = "#38845c";
+                message.textContent = "Classroom code copied!";
+            } catch (error) {
+                message.style.color = "#c14b4b";
+                message.textContent =
+                    "Unable to copy automatically. Please copy the code manually.";
+            }
+        }
+
+        function openTriviaTap() {
+            if (!code) return;
+
+            message.style.color = "#5267d8";
+            message.textContent =
+                "Open TriviaTap and enter this classroom code: " + code;
+        }
+    </script>
+
+</body>
+</html>
